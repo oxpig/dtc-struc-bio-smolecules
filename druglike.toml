@@ -1,0 +1,261 @@
+############################################################
+# Reinvent RL config: "drug-like" objective (teaching version)
+#
+# Usage:
+#   reinvent -l output/druglike.log druglike.toml
+#
+# Outputs:
+#   output/druglike.log                       (run log)
+#   output/druglike_1.csv                     (samples + scores over RL steps)
+#   output/druglike.chkpt                     (trained agent checkpoint)
+#   output/druglike_tb/                       (TensorBoard scalars)
+#   output/druglike_staged_learning.json      (resolved config snapshot)
+############################################################
+
+run_type   = "staged_learning"                           # RL mode
+device     = "cpu"                                       # use "cuda:0" if you have a GPU
+tb_logdir  = "output/druglike_tb"                        # TensorBoard output folder
+json_out_config = "output/druglike_staged_learning.json" # snapshot of effective config
+
+[parameters]
+agent_file      = "reinvent.prior"        # model we are updating (initial agent)
+prior_file      = "reinvent.prior"        # fixed reference model
+use_checkpoint  = false                   # false = start fresh; true = resume from chkpt_file below
+
+summary_csv_prefix = "output/druglike"    # RL will write output/druglike_1.csv
+batch_size         = 64                   # how many SMILES per RL step
+randomize_smiles   = true                 # SMILES randomization to improve exploration
+
+[learning_strategy]
+type  = "dap"                             # DAP = REINVENT's policy update strategy
+sigma = 128.0                             # scaling factor for the policy gradient "advantage"
+rate  = 0.0001                            # learning rate (required in 4.3.x)
+
+############################################################
+# Diversity filter
+#
+# We don't want the model to just spam one chemotype.
+# The IdenticalMurckoScaffold filter groups molecules by Murcko scaffold.
+#
+# bucket_size         : max #high-scoring molecules allowed per scaffold "bucket"
+# minscore            : only molecules above this score count toward filling a bucket
+# penalty_multiplier  : how hard we downweight overused scaffolds
+############################################################
+[diversity_filter]
+type                = "IdenticalMurckoScaffold"
+bucket_size         = 25
+minscore            = 0.4
+minsimilarity       = 0.4
+penalty_multiplier  = 0.5
+
+############################################################
+# Single RL stage
+#
+# max_steps: how many RL update steps to run
+# termination "simple": stop when max_steps is reached
+# chkpt_file: final agent after this stage
+############################################################
+[[stage]]
+max_steps   = 200
+termination = "simple"
+min_steps   = 25
+chkpt_file  = "output/druglike.chkpt"
+
+############################################################
+# SCORING FUNCTION
+#
+# The agent is rewarded based on the geometric mean of all components below.
+#
+# Each component:
+#   1. Calculates a raw property (MW, logP, HBD, etc.)
+#   2. Transforms it to [0,1]
+#   3. Applies a weight
+#
+# geometric_mean means: if any component is ~0, the whole score drops.
+# So we reward *balanced* drug-like profiles, not one extreme trick.
+############################################################
+[stage.scoring]
+type = "geometric_mean"
+
+############################################################
+# 1. Molecular weight (MW)
+#
+# Goal: stay in "drug-like" small molecule space, ~200–400 Da.
+# double_sigmoid rewards being INSIDE that window:
+#   - ~200–400 -> score near 1
+#   - too small / too large -> score toward 0
+############################################################
+[[stage.scoring.component]]
+[stage.scoring.component.MolecularWeight]
+
+[[stage.scoring.component.MolecularWeight.endpoint]]
+name   = "MW"
+weight = 1.0
+
+[stage.scoring.component.MolecularWeight.endpoint.transform]
+type      = "double_sigmoid"
+low       = 200.0     # start of preferred MW range
+high      = 400.0     # end of preferred MW range
+coef_div  = 400.0     # shape control (leave as-is for workshop)
+coef_si   = 20.0      # steepness entering range
+coef_se   = 20.0      # steepness leaving range
+
+############################################################
+# 2. logP (SlogP)
+#
+# Goal: avoid molecules that are too polar (<0) or too greasy (>4-5).
+# 0–4 is a good "Goldilocks" zone for permeability vs solubility.
+# double_sigmoid again: reward middle, penalize extremes.
+############################################################
+[[stage.scoring.component]]
+[stage.scoring.component.SlogP]
+
+[[stage.scoring.component.SlogP.endpoint]]
+name   = "SlogP"
+weight = 1.0
+
+[stage.scoring.component.SlogP.endpoint.transform]
+type      = "double_sigmoid"
+low       = 0.0       # lower edge of nice logP band
+high      = 4.0       # above ~4 gets too greasy
+coef_div  = 4.0
+coef_si   = 20.0
+coef_se   = 20.0
+
+############################################################
+# 3. H-bond donors (HBD)
+#
+# Lipinski: HBD typically <= 5 (often aim <=4).
+# reverse_sigmoid rewards *fewer* donors:
+#   - near 0 donors -> high score
+#   - many donors   -> low score
+#
+# We keep k at a "default-ish" gentle slope: 0.5
+############################################################
+[[stage.scoring.component]]
+[stage.scoring.component.HBondDonors]
+
+[[stage.scoring.component.HBondDonors.endpoint]]
+name   = "HBD"
+weight = 1.0
+
+[stage.scoring.component.HBondDonors.endpoint.transform]
+type = "reverse_sigmoid"
+low  = 0.0     # 0 donors = ideal permeability
+high = 4.0     # >4 donors gets penalized
+k    = 0.5     # slope (use default-ish 0.5)
+
+############################################################
+# 4. H-bond acceptors (HBA)
+#
+# Lipinski: HBA usually <= 10, but in practice a lot of nice
+# oral drugs live <= 6.
+#
+# Same story: reverse_sigmoid rewards keeping acceptors modest.
+# k kept at ~0.5 for a sane slope.
+############################################################
+[[stage.scoring.component]]
+[stage.scoring.component.HBondAcceptors]
+
+[[stage.scoring.component.HBondAcceptors.endpoint]]
+name   = "HBA"
+weight = 1.0
+
+[stage.scoring.component.HBondAcceptors.endpoint.transform]
+type = "reverse_sigmoid"
+low  = 0.0     # 0 acceptors = max reward
+high = 6.0     # >6 acceptors penalized
+k    = 0.5     # slope (default-ish)
+
+############################################################
+# 5. TPSA (Topological Polar Surface Area)
+#
+# TPSA ~20–120 Å² is often a "sweet spot":
+#   - too low TPSA → super nonpolar bricks, maybe solubility issues
+#   - too high TPSA → too polar, hurts passive permeability
+#
+# double_sigmoid rewards that middle band.
+############################################################
+[[stage.scoring.component]]
+[stage.scoring.component.TPSA]
+
+[[stage.scoring.component.TPSA.endpoint]]
+name   = "TPSA"
+weight = 1.0
+
+[stage.scoring.component.TPSA.endpoint.transform]
+type      = "double_sigmoid"
+low       = 20.0      # lower edge of reasonable TPSA
+high      = 120.0     # upper edge of reasonable TPSA
+coef_div  = 120.0
+coef_si   = 20.0
+coef_se   = 20.0
+
+############################################################
+# 6. QED (Quantitative Estimate of Drug-likeness)
+#
+# QED is already 0–1. Higher ~ "more drug-like" by medicinal
+# chemistry heuristics (balance of size, lipophilicity, etc.).
+#
+# We wrap it in a sigmoid anyway just to keep the interface consistent
+# and to gently push QED upward. We set k ~0.5 as our default-ish slope.
+############################################################
+[[stage.scoring.component]]
+[stage.scoring.component.Qed]
+
+[[stage.scoring.component.Qed.endpoint]]
+name   = "QED"
+weight = 1.0
+
+[stage.scoring.component.Qed.endpoint.transform]
+type = "sigmoid"
+low  = 0.5     # below ~0.5 gets weaker reward
+high = 1.0     # near 1.0 is ideal
+k    = 0.5     # slope (use default-ish 0.5)
+
+############################################################
+# 7. Synthetic Accessibility (SAScore)
+#
+# SAScore ~1 = easy to make, ~10 = ridiculous.
+# reverse_sigmoid gives high reward for easy (low SA),
+# and decays as SA gets ugly/complex.
+#
+# We use k ~0.5 again for the slope.
+############################################################
+[[stage.scoring.component]]
+[stage.scoring.component.SAScore]
+
+[[stage.scoring.component.SAScore.endpoint]]
+name   = "SA"
+weight = 1.0
+
+[stage.scoring.component.SAScore.endpoint.transform]
+type = "reverse_sigmoid"
+low  = 1.0      # very easy / tractable synthesis
+high = 6.0      # above this is getting painful
+k    = 0.5      # slope (default-ish)
+
+############################################################
+# 8. Aromatic ring count (NumAromaticRings)
+#
+# Many highly aromatic, very flat molecules become "bricks":
+# - low solubility
+# - metabolic red flags
+#
+# We softly discourage piling on lots of aromatic rings.
+# reverse_sigmoid again: reward fewer aromatics.
+#
+# k kept ~0.5 as our default slope.
+############################################################
+[[stage.scoring.component]]
+[stage.scoring.component.NumAromaticRings]
+
+[[stage.scoring.component.NumAromaticRings.endpoint]]
+name   = "AromRings"
+weight = 1.0
+
+[stage.scoring.component.NumAromaticRings.endpoint.transform]
+type = "reverse_sigmoid"
+low  = 0.0      # 0 aromatics allowed / fine
+high = 4.0      # >4 aromatic rings is often too flat/greasy
+k    = 0.5      # slope (default-ish)

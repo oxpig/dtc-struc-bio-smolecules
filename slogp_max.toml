@@ -1,0 +1,42 @@
+run_type   = "staged_learning"
+device     = "cpu"
+tb_logdir  = "output/tb_logs"
+json_out_config = "output/_staged_learning.json"
+
+[parameters]
+agent_file      = "reinvent.prior"
+prior_file      = "reinvent.prior"
+use_checkpoint  = false
+
+# REINVENT will write output/run_1.csv
+summary_csv_prefix = "output/run"
+
+batch_size         = 64
+randomize_smiles   = true
+
+[learning_strategy]
+type = "dap"
+sigma = 128.0
+rate  = 0.0001
+
+[[stage]]
+max_steps   = 200
+termination = "simple"
+min_steps   = 25
+chkpt_file  = "output/run.chkpt"
+
+[stage.scoring]
+type = "geometric_mean"
+
+[[stage.scoring.component]]
+[stage.scoring.component.SlogP]
+
+[[stage.scoring.component.SlogP.endpoint]]
+name   = "SlogP"
+weight = 1.0
+
+[stage.scoring.component.SlogP.endpoint.transform]
+type = "sigmoid"
+low  = 0.0
+high = 12.0
+k    = 1.0

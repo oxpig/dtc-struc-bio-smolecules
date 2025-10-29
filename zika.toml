@@ -1,0 +1,50 @@
+# zika.toml
+# LibINVENT RL: decorate a given scaffold toward drug-like properties
+# All outputs (log, CSV, checkpoint, TB logs) go under output/zika*
+
+run_type        = "staged_learning"
+device          = "cpu"
+tb_logdir       = "output/zika_tb"
+json_out_config = "output/zika_staged_learning.json"
+
+[parameters]
+prior_file         = "libinvent.prior"     # LibINVENT prior in current directory
+agent_file         = "libinvent.prior"     # agent starts as the same model
+use_checkpoint     = false                 # start fresh
+purge_memories     = false
+
+smiles_file        = "scaffolds.smi"       # scaffold(s) with '*' attachment point(s)
+batch_size         = 64
+randomize_smiles   = true
+unique_sequences   = true
+
+summary_csv_prefix = "output/zika"        # will create output/zika_1.csv
+
+[learning_strategy]
+type  = "dap"
+sigma = 128
+rate  = 0.0001
+
+[[stage]]
+chkpt_file  = "output/zika.chkpt"
+termination = "simple"
+min_steps   = 25
+max_steps   = 100
+max_score   = 0.95
+
+[stage.scoring]
+type = "geometric_mean"
+
+# Favor molecular weight in a typical small-molecule range (~250–500 Da)
+[[stage.scoring.component]]
+[stage.scoring.component.MolecularWeight]
+[[stage.scoring.component.MolecularWeight.endpoint]]
+name   = "mw_window"
+weight = 0.8
+[stage.scoring.component.MolecularWeight.endpoint.transform]
+type      = "double_sigmoid"
+low       = 250.0
+high      = 500.0
+coef_div  = 1.0
+coef_si   = 1.0
+coef_se   = 1.0
