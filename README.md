@@ -11,24 +11,6 @@ conda env create -f SMDD_env.yaml
 conda activate SMDD_env
 ```
 
-### Install SMINA 
-
-SMINA is required for docking. Install separately:
-
-```bash
-# Option 1: Install via conda (recommended)
-conda install -c conda-forge smina
-
-# Option 2: Install from source
-git clone https://github.com/mwojcikowski/smina.git
-cd smina
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make
-# Add to PATH or install system-wide
-sudo make install
-```
-
 ### Install REINVENT4
 
 For generating compounds we will use REINVENT4:

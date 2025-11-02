@@ -12,8 +12,8 @@ dependencies:
   - matplotlib
   - pyyaml
   - openbabel
+  - smina
   - mdanalysis
-  # Optional: for better visualization in Jupyter
   - ipywidgets
   - jupyter
   - pip
@@ -21,6 +21,4 @@ dependencies:
     - py3dmol
     - prolif
     - posebusters
-    # Note: SMINA may need to be installed separately
-    # See ENVIRONMENT_SETUP.md for SMINA installation instructions
 
