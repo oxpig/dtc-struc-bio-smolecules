@@ -8,12 +8,12 @@ tb_logdir       = "output/zika_tb"
 json_out_config = "output/zika_staged_learning.json"
 
 [parameters]
-prior_file         = "libinvent.prior"     # LibINVENT prior in current directory
-agent_file         = "libinvent.prior"     # agent starts as the same model
+prior_file         = "priors/libinvent.prior"     # LibINVENT prior in current directory
+agent_file         = "priors/libinvent.prior"     # agent starts as the same model
 use_checkpoint     = false                 # start fresh
 purge_memories     = false
 
-smiles_file        = "scaffolds.smi"       # scaffold(s) with '*' attachment point(s)
+smiles_file        = "data/scaffold.smi"       # scaffold(s) with '*' attachment point(s)
 batch_size         = 64
 randomize_smiles   = true
 unique_sequences   = true

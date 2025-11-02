@@ -4,8 +4,8 @@ tb_logdir  = "output/tb_logs"
 json_out_config = "output/_staged_learning.json"
 
 [parameters]
-agent_file      = "reinvent.prior"
-prior_file      = "reinvent.prior"
+agent_file      = "priors/reinvent.prior"
+prior_file      = "priors/reinvent.prior"
 use_checkpoint  = false
 
 # REINVENT will write output/run_1.csv

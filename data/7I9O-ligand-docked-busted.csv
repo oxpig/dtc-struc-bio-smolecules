@@ -1,0 +1,11 @@
+file,molecule,position,mol_pred_loaded,mol_true_loaded,mol_cond_loaded,sanitization,inchi_convertible,all_atoms_connected,molecular_formula,molecular_bonds,double_bond_stereochemistry,tetrahedral_chirality,bond_lengths,bond_angles,internal_steric_clash,aromatic_ring_flatness,non-aromatic_ring_non-flatness,double_bond_flatness,internal_energy,protein-ligand_maximum_distance,minimum_distance_to_protein,minimum_distance_to_organic_cofactors,minimum_distance_to_inorganic_cofactors,minimum_distance_to_waters,volume_overlap_with_protein,volume_overlap_with_organic_cofactors,volume_overlap_with_inorganic_cofactors,volume_overlap_with_waters,rmsd_≤_2å
+7I9O-ligand-docked.sdf,,0,True,True,True,True,True,True,False,True,True,False,True,True,True,True,True,True,,True,True,True,True,True,True,True,True,True,False
+7I9O-ligand-docked.sdf,,1,True,True,True,True,True,True,False,True,True,False,True,True,True,True,True,True,,True,True,True,True,True,True,True,True,True,False
+7I9O-ligand-docked.sdf,,2,True,True,True,True,True,True,False,True,True,False,True,True,True,True,True,True,,True,True,True,True,True,True,True,True,True,False
+7I9O-ligand-docked.sdf,,3,True,True,True,True,True,True,False,True,True,False,True,True,True,True,True,True,,True,True,True,True,True,True,True,True,True,False
+7I9O-ligand-docked.sdf,,4,True,True,True,True,True,True,False,True,True,False,True,True,True,True,True,True,,True,True,True,True,True,True,True,True,True,False
+7I9O-ligand-docked.sdf,,5,True,True,True,True,True,True,False,True,True,False,True,True,True,True,True,True,,True,True,True,True,True,True,True,True,True,False
+7I9O-ligand-docked.sdf,,6,True,True,True,True,True,True,False,True,True,False,True,True,True,True,True,True,,True,True,True,True,True,True,True,True,True,False
+7I9O-ligand-docked.sdf,,7,True,True,True,True,True,True,False,True,True,False,True,True,True,True,True,True,,True,True,True,True,True,True,True,True,True,False
+7I9O-ligand-docked.sdf,,8,True,True,True,True,True,True,False,True,True,False,True,True,True,True,True,True,,True,True,True,True,True,True,True,True,True,False
+7I9O-ligand-docked.sdf,,9,True,True,True,True,True,True,False,True,True,False,True,True,True,True,True,True,,True,True,True,True,True,True,True,True,True,False

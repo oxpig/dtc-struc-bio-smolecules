@@ -18,8 +18,8 @@ tb_logdir  = "output/druglike_tb"                        # TensorBoard output fo
 json_out_config = "output/druglike_staged_learning.json" # snapshot of effective config
 
 [parameters]
-agent_file      = "reinvent.prior"        # model we are updating (initial agent)
-prior_file      = "reinvent.prior"        # fixed reference model
+agent_file      = "priors/reinvent.prior"        # model we are updating (initial agent)
+prior_file      = "priors/reinvent.prior"        # fixed reference model
 use_checkpoint  = false                   # false = start fresh; true = resume from chkpt_file below
 
 summary_csv_prefix = "output/druglike"    # RL will write output/druglike_1.csv
