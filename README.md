@@ -6,7 +6,7 @@
 
 ## 0. Environment setup (REINVENT4 quick start)
 
-We’ll be using **REINVENT4**, an open-source generative design tool for small molecules. REINVENT4 can sample and optimise molecules toward a custom multi-parameter score (drug-likeness, properties, etc.), and it exposes a `reinvent` command-line interface that we call from the notebooks using a TOML config. ([GitHub][1])
+We'll be using **REINVENT4**, an open-source generative design tool for small molecules. REINVENT4 can sample and optimise molecules toward a custom multi-parameter score (drug-likeness, properties, etc.), and it exposes a `reinvent` command-line interface that we call from the notebooks using a TOML config. ([GitHub][1])
 
 Follow these steps in a terminal before running the notebooks:
 
@@ -33,11 +33,11 @@ reinvent --help
   reinvent -l run.log config.toml
   ```
 
-  This is exactly what we’ll do in the notebooks. ([GitHub][1])
+  This is exactly what we'll do in the notebooks. ([GitHub][1])
 
 ### Pretrained priors
 
-REINVENT4 uses pretrained “prior” models. You’ll point to these priors in your TOML (for example as `prior_file = "libinvent.prior"`). All public prior models are distributed on Zenodo by the REINVENT4 authors. ([GitHub][1])
+REINVENT4 uses pretrained "prior" models. You'll point to these priors in your TOML (for example as `prior_file = "libinvent.prior"`). All public prior models are distributed on Zenodo by the REINVENT4 authors. ([GitHub][1])
 
 For this workshop you should download the provided prior checkpoints (from the Zenodo record we give you) and place them in your working directory, e.g.:
 
@@ -80,11 +80,11 @@ You must justify that choice using:
 Focus: **ligand-based analysis with RDKit**
 
 * Load and visualise molecules from SMILES.
-* Inspect the given “hit” / scaffold.
+* Inspect the given "hit" / scaffold.
 * Calculate key medicinal chemistry properties (molecular weight, cLogP, polar surface area, etc.).
 * Apply simple filtering to remove obviously bad ideas.
 
-By the end of Notebook 1 you should be able to look at a SMILES and say: “Is this even remotely drug-like, or is it instantly disqualified?”
+By the end of Notebook 1 you should be able to look at a SMILES and say: "Is this even remotely drug-like, or is it instantly disqualified?"
 
 ---
 
@@ -92,12 +92,12 @@ By the end of Notebook 1 you should be able to look at a SMILES and say: “Is t
 
 Focus: **generative design with REINVENT4**
 
-What you’ll do here:
+What you'll do here:
 
 * Edit a TOML config (e.g. `zika.toml`) to define a **scoring function**.
-  This score encodes what “good” means for our Zika protease project (size window, acceptable polarity, etc.). REINVENT4 is built to optimise multi-component scores via reinforcement learning and sampling. ([GitHub][1])
+  This score encodes what "good" means for our Zika protease project (size window, acceptable polarity, etc.). REINVENT4 is built to optimise multi-component scores via reinforcement learning and sampling. ([GitHub][1])
 * Run `reinvent` from inside the notebook. This generates new candidate molecules.
-* Collect the output CSV (the model’s proposed compounds + their scores).
+* Collect the output CSV (the model's proposed compounds + their scores).
 * Do first-pass triage of those molecules in Python: throw out junk, keep interesting ones.
 
 The goal of Notebook 2 is to become comfortable driving REINVENT4 end-to-end: define the score → run the model → interpret the output.
@@ -108,13 +108,13 @@ The goal of Notebook 2 is to become comfortable driving REINVENT4 end-to-end: de
 
 Focus: **structure-based design**
 
-Here we move from “this looks drug-like on paper” to “does it actually bind the protease pocket?”
+Here we move from "this looks drug-like on paper" to "does it actually bind the protease pocket?"
 
-* You’ll take a filtered subset (you cannot dock everything; assume a budget of ~100 molecules max).
+* You'll take a filtered subset (you cannot dock everything; assume a budget of ~100 molecules max).
 * Dock those molecules into the active site of the Zika virus NS2B–NS3 protease using the crystal structure 7I9O. 7I9O captures the protease with bound small-molecule inhibitors at ~1.96 Å resolution, so it gives us a physically reasonable binding site. ([RCSB Protein Data Bank][2])
 * Inspect protein–ligand interactions: hydrogen bonds, hydrophobic contacts, shape complementarity, etc.
 
-By the end of Notebook 3, you should be able to say which designs actually look like plausible protease inhibitors rather than just “nice SMILES strings.”
+By the end of Notebook 3, you should be able to say which designs actually look like plausible protease inhibitors rather than just "nice SMILES strings."
 
 ---
 
@@ -141,7 +141,7 @@ You will follow (and simulate) a very typical early antiviral hit-to-lead pipeli
 2. **Idea generation (Notebook 2)**
 
    * Use REINVENT4 and a custom scoring function to generate new analogues.
-   * Shape the scoring function to reflect what you think a “good protease inhibitor lead” looks like (physchem limits, etc.). ([GitHub][1])
+   * Shape the scoring function to reflect what you think a "good protease inhibitor lead" looks like (physchem limits, etc.). ([GitHub][1])
    * Sample molecules and collect them into a candidate list.
 
 3. **Triage / downselection (Notebook 2 → 3)**
@@ -165,7 +165,7 @@ You will follow (and simulate) a very typical early antiviral hit-to-lead pipeli
    * Select **one final compound**.
    * Justify why this is the best next-step design for a Zika protease inhibitor (biologically relevant target, plausible binding mode, okay properties, believable synthetic path).
 
-This pipeline is how you go from “interesting fragment in a crystal structure” to “here is a concrete small molecule I want a chemist to make.”
+This pipeline is how you go from "interesting fragment in a crystal structure" to "here is a concrete small molecule I want a chemist to make."
 
 ---
 
