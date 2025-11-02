@@ -1,31 +1,49 @@
-# Structure-Based Drug Discovery Workshop
+# Structure-based Small Molecule Drug Design
 
 ### Designing a Zika Protease Binder
 
----
-
 ## 0. Environment setup
 
-Install REINVENT4 in a Conda environment:
+### Create `SMDD_env` environment
+
+```bash
+conda env create -f SMDD_env.yaml
+conda activate SMDD_env
+```
+
+### Install SMINA 
+
+SMINA is required for docking. Install separately:
+
+```bash
+# Option 1: Install via conda (recommended)
+conda install -c conda-forge smina
+
+# Option 2: Install from source
+git clone https://github.com/mwojcikowski/smina.git
+cd smina
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make
+# Add to PATH or install system-wide
+sudo make install
+```
+
+### Install REINVENT4
+
+For generating compounds we will use REINVENT4:
 
 ```bash
 git clone https://github.com/MolecularAI/REINVENT4.git
 cd REINVENT4
-conda create --name reinvent4 python=3.10
-conda activate reinvent4
+conda activate SMDD_env
 python install.py cpu
 reinvent --help
 ```
 
-Download the pretrained prior models from Zenodo and place them in your working directory.
-
----
-
 ## 1. Workshop goal
 
 Design a compound that binds Zika virus NS2B–NS3 protease better than the original hit. We use the crystal structure 7I9O as our target. Justify your choice using property analysis, generative model scores, and docking interactions.
-
----
 
 ## 2. Notebook overview
 
@@ -43,19 +61,15 @@ Structure-based design: dock molecules into the Zika protease structure (7I9O) a
 
 ### `4_cure_zika.ipynb`
 
-Lead nomination: combine all analyses to select one final compound and justify your choice.
-
----
+Cure Zika!: combine all analyses to select **10 compounds** and justify your choice.
 
 ## 3. Discovery pipeline
 
 1. **Hit understanding**: Analyze the starting scaffold and its properties.
-2. **Idea generation**: Use REINVENT4 to generate new analogues with a custom scoring function.
-3. **Triage**: Filter by toxicity, redundancy, and properties (~100 molecules).
+2. **Idea generation**: Use LibINVENT to generate new analogues with a custom scoring function.
+3. **Triage**: Filter by toxicity and other properties (~100 molecules).
 4. **Docking**: Dock into the Zika NS2B–NS3 protease structure (7I9O).
-5. **Lead nomination**: Select and justify one final compound.
-
----
+5. **Compound selection**: Select and justify 10 of the best compounds.
 
 [1]: https://github.com/MolecularAI/REINVENT4 "GitHub - MolecularAI/REINVENT4: AI molecular design tool for de novo design, scaffold hopping, R-group replacement, linker design and molecule optimization."
 [2]: https://www.rcsb.org/structure/7i9o?utm_source=chatgpt.com "7I9O: Group deposition of ZIKV NS2B-NS3 protease in ..."

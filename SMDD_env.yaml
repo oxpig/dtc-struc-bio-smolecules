@@ -1,0 +1,26 @@
+name: SMDD_env
+channels:
+  - conda-forge
+  - rdkit
+  - defaults
+  - bioconda
+dependencies:
+  - python=3.10
+  - rdkit
+  - pandas
+  - numpy
+  - matplotlib
+  - pyyaml
+  - openbabel
+  - mdanalysis
+  # Optional: for better visualization in Jupyter
+  - ipywidgets
+  - jupyter
+  - pip
+  - pip:
+    - py3dmol
+    - prolif
+    - posebusters
+    # Note: SMINA may need to be installed separately
+    # See ENVIRONMENT_SETUP.md for SMINA installation instructions
+
