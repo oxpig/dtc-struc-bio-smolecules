@@ -19,7 +19,10 @@ For generating compounds we will use REINVENT4:
 git clone https://github.com/MolecularAI/REINVENT4.git
 cd REINVENT4
 conda activate SMDD_env
+# option 1: only cpu (macs can only use cpu)
 python install.py cpu
+# option 2: use gpu
+python install.py cu124
 reinvent --help
 ```
 
@@ -28,6 +31,12 @@ reinvent --help
 Design a compound that binds Zika virus NS2B–NS3 protease better than the original hit. We use the crystal structure 7I9O as our target. Justify your choice using property analysis, generative model scores, and docking interactions.
 
 ## 2. Notebook overview
+
+```bash
+# open notebooks
+conda activate SMDD_env
+jupyter lab
+```
 
 ### `1_intro_to_rdkit.ipynb`
 
