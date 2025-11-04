@@ -1,6 +1,6 @@
 # Structure-based Small Molecule Drug Design
 
-### Designing a Zika Protease Binder
+This work was funded by the [Doctoral Training Centre at the University of Oxford](https://www.dtc.ox.ac.uk/).
 
 ## 0. Environment setup
 
