@@ -1,6 +1,11 @@
-# Structure-based Small Molecule Drug Design
+# An Introduction to Structure-based Small Molecule Drug Design
 
-This work was funded by the [Doctoral Training Centre at the University of Oxford](https://www.dtc.ox.ac.uk/).
+These materials are designed to help you learn the basics of computational small molecule drug design. Small molecules are compounds smaller than proteins, typically containing around 20–70 heavy atoms. Using structure-based techniques, you will explore the key tools, concepts, and workflows through a series of interactive Jupyter notebooks. By the end you’ll be ready to explore how using computational tools can result in the discovery of your very own (virtual) drug candidates to cure Zika!
+
+⚠️ Disclaimer
+
+This repository is not a comprehensive guide to computational small molecule drug design. It reflects the perspectives and tool preferences of the authors and is intended for educational purposes only. These materials were developed with support from the [Doctoral Training Centre at the University of Oxford](https://www.dtc.ox.ac.uk/).
+
 
 ## 0. Environment setup
 
@@ -26,7 +31,7 @@ python install.py cu124
 reinvent --help
 ```
 
-## 1. Workshop goal
+## 1. Final workshop goal
 
 Design a compound that binds Zika virus NS2B–NS3 protease better than the original hit. We use the crystal structure 7I9O as our target. Justify your choice using property analysis, generative model scores, and docking interactions.
 
