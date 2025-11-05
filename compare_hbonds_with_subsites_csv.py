@@ -3,7 +3,6 @@
 
 import argparse
 import re
-import sys
 from pathlib import Path
 import pandas as pd
 
@@ -27,9 +26,18 @@ def ensure_bool(df):
 def normalize_df_rows(df_raw):
     df = df_raw.copy()
     df.columns = normalize_columns(df_raw)
+    # Only transpose if it's a single row AND the columns don't look like interaction columns
+    # (interaction columns typically have dots and interaction keywords)
     if df.shape[0] == 1 and df.shape[1] > 1:
-        df = df.T
-        df.columns = ["value"]
+        # Check if columns look like they contain interaction information
+        has_interaction_format = any(
+            ("." in str(col) and any(kw.lower() in str(col).lower() 
+             for kw in ["HBDonor", "HBAcceptor", "Ionic", "Cationic", "VdW", "Hydrophobic", "PiStacking"]))
+            for col in df.columns
+        )
+        if not has_interaction_format:
+            df = df.T
+            df.columns = ["value"]
     return ensure_bool(df)
 
 def extract_residue(colname, interaction_keywords):
@@ -67,7 +75,35 @@ def load_table(path: Path):
         raise FileNotFoundError(path)
     if path.suffix.lower() in (".parquet", ".pq"):
         return pd.read_parquet(path)
-    return pd.read_csv(path, index_col=0)
+    df = pd.read_csv(path, index_col=0)
+    
+    # Check if this is the special CSV structure with protein/interaction rows
+    if "protein" in df.index and "interaction" in df.index:
+        # Reconstruct column names from protein and interaction rows
+        protein_row = df.loc["protein"]
+        interaction_row = df.loc["interaction"]
+        
+        # Create new column names: "PROTEIN_RESIDUE.INTERACTION_TYPE"
+        # Use positional indexing since columns might have duplicate names
+        new_columns = []
+        for i in range(len(df.columns)):
+            protein = str(protein_row.iloc[i]).strip() if i < len(protein_row) else ""
+            interaction = str(interaction_row.iloc[i]).strip() if i < len(interaction_row) else ""
+            if protein and interaction and interaction not in ["", "nan", "None"]:
+                new_columns.append(f"{protein}.{interaction}")
+            elif protein:
+                new_columns.append(protein)
+            else:
+                new_columns.append(str(df.columns[i]))
+        
+        df.columns = new_columns
+        
+        # Remove metadata rows (ligand, protein, interaction, Frame) and keep only frame data rows
+        metadata_rows = ["ligand", "protein", "interaction", "Frame"]
+        frame_rows = [idx for idx in df.index if idx not in metadata_rows]
+        df = df.loc[frame_rows]
+    
+    return df
 
 def get_mol_names_from_sdf(sdfpath: Path):
     from rdkit.Chem import SDMolSupplier
