@@ -6,7 +6,6 @@ These materials are designed to help you learn the basics of computational small
 
 This repository is not a comprehensive guide to computational small molecule drug design. It reflects the perspectives and tool preferences of the authors and is intended for educational purposes only. These materials were developed with support from the [Doctoral Training Centre at the University of Oxford](https://www.dtc.ox.ac.uk/).
 
-
 ## 0. Environment setup
 
 ### Create `SMDD_env` environment
@@ -24,16 +23,13 @@ For generating compounds we will use REINVENT4:
 git clone https://github.com/MolecularAI/REINVENT4.git
 cd REINVENT4
 conda activate SMDD_env
-# option 1: only cpu (macs can only use cpu)
-python install.py cpu
-# option 2: use gpu
-python install.py cu124
+python install.py cpu # or rocm6.2.4, cpu, mac, etc. depending on what OS you have
 reinvent --help
 ```
 
 ## 1. Final workshop goal
 
-Design a compound that binds Zika virus NS2B–NS3 protease better than the original hit. We use the crystal structure 7I9O as our target. Justify your choice using property analysis, generative model scores, and docking interactions.
+Design a compound that binds Zika virus NS2B–NS3 protease better than a known inhibitor. Justify your choice using property analysis, generative model scores, and docking interactions.
 
 ## 2. Notebook overview
 
@@ -53,7 +49,7 @@ Generative design with REINVENT4: define a scoring function in TOML, generate ca
 
 ### `3_zika_example_workflow.ipynb`
 
-Structure-based design: dock molecules into the Zika protease structure (7I9O) and analyze protein–ligand interactions.
+Structure-based design: dock molecules into the Zika protease structure (PDB ID: 7I9O) and analyze protein–ligand interactions.
 
 ### `4_cure_zika.ipynb`
 
