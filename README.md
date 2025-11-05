@@ -23,7 +23,7 @@ For generating compounds we will use REINVENT4:
 git clone https://github.com/MolecularAI/REINVENT4.git
 cd REINVENT4
 conda activate SMDD_env
-python install.py cpu # or rocm6.2.4, cpu, mac, etc. depending on what OS you have
+python install.py cpu # or rocm6.2.4, cpu, mac, etc. depending on what OS you have, see REINVENT4 repo for help
 reinvent --help
 ```
 
