@@ -1,6 +1,6 @@
 # An Introduction to Structure-based Small Molecule Drug Design
 
-These materials are designed to help you learn the basics of computational small molecule drug design. Small molecules are compounds smaller than proteins, typically containing around 20–70 heavy atoms. Using structure-based techniques, you will explore the key tools, concepts, and workflows through a series of interactive Jupyter notebooks. By the end you’ll be ready to explore how using computational tools can result in the discovery of your very own (virtual) drug candidates to cure Zika!
+These materials are designed to help you learn the basics of computational small molecule drug design (small molecules are compounds smaller than proteins, typically containing around 20–70 heavy atoms). Using structure-based techniques, you will explore the key tools, concepts, and workflows through a series of interactive Jupyter notebooks. By the end you’ll be ready to explore how using computational tools can result in the discovery of your very own (virtual) drug candidates to cure Zika!
 
 ⚠️ Disclaimer
 
